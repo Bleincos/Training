@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Entrainement_OBL</string>
+    <string name="title_activity_dev_inf">Dev_inf</string>
+    <string name="Back">Back</string>
+    <string name="Minutes">Minutes</string>
+    <string name="Secondes">Secondes</string>
+    <string name="Rep">Répétitions</string>
+    <string name="Recup">Temps de récupération</string>
+</resources>
