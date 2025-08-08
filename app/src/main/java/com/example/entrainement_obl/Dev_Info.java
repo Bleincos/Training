@@ -31,7 +31,7 @@ public class Dev_Info extends AppCompatActivity {
             return insets;
         });
         PDFView pdfV= findViewById(R.id.PdfView);
-        pdfV.fromAsset("Entrainement_Dev_Info.pdf").load();
+        pdfV.fromAsset("Entrainement_Dev_info.pdf").load();
     }
 
     /**

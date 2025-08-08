@@ -13,8 +13,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.SeekBar;
@@ -26,29 +26,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class Settings extends AppCompatActivity {
-private static int valueMaxBrg = 4096; // For the dev's device set it to 4096 for emulation set it to 255
+private static int valueMaxBrg = 255; // For the dev's device set it to 4096 for emulation set it to 255
 /**
  * Variables
  */
-//public BluetoothConnectionService bluetoothConnection;
-
-//public ArrayList<BluetoothDevice> devices = new ArrayList<>();
-//public ArrayList<BluetoothDevice> devicesAppaired = new ArrayList<>();
-//private TextView textViewBT;
-//private TextView textViewListBTAppaired;
-//private BluetoothAdapter bluetoothAdapter;
-//private Button buttonsearch;
-
-//private BroadcastReceiver broadcastReceiver;
-//private Boolean isBroadcastRegsitered = false;
-private Button back2;
-
-//public BluetoothDevice device;
-
-//public ListView deviceList;
-//public ListView deviceAppairedList;
-        //public BluetoothArrayAdapter adapter, adapter2;
-
 public CheckBox boxAuto;
 public SensorManager mySensorManager;
 public Sensor sensorLight;
@@ -73,12 +54,13 @@ private EditText edit2text;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= VERSION_CODES.M) {
-            //checkBTPermissions();
             getPermissionBrightness();
             checkSensor();
         }
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_settings);
+        Toast tooast = Toast.makeText(this, "Test", Toast.LENGTH_SHORT);
+        tooast.show();
         /**
          * Pop up part
          */
@@ -94,6 +76,7 @@ private EditText edit2text;
              Sensors part
              */
             boxAuto = findViewById(R.id.autolight);
+            Log.i("Settings", "TEST");
             boxAuto.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -103,7 +86,7 @@ private EditText edit2text;
 
                     } else {
                         if (success) {
-                            mySensorManager.unregisterListener((SensorListener) Settings.this);
+                            //mySensorManager.unregisterListener((SensorEventListener) Settings.this);
                         }else{
                             Toast.makeText(Settings.this, "Permissions aren't granted", Toast.LENGTH_LONG).show();
                         }
@@ -111,122 +94,6 @@ private EditText edit2text;
                     }
                 }
             });
-            /*
-            UI part
-             */
-            back2 = findViewById(R.id.button_back);
-
-    /**
-     User Interface Part
-
-    deviceList = findViewById(R.id.listViewBTSearch);
-    deviceAppairedList = findViewById(R.id.listViewBTAppaired);
-    textViewBT = findViewById(R.id.textViewBluetooth);
-    buttonsearch = findViewById(R.id.buttonSearch);
-    textViewListBTAppaired = findViewById(R.id.textViewListBluetoothAppaired);
-
-    adapter = new BluetoothArrayAdapter(this, R.layout.bt_devices, devices);
-    deviceList.setAdapter(adapter);
-    adapter2 = new BluetoothArrayAdapter(this, R.layout.bt_devices, devicesAppaired);
-    deviceAppairedList.setAdapter(adapter2);
-    */
-     /**
-     Bluetooth Part
-
-    send = findViewById(R.id.buttonSend);
-    edit2text = findViewById(R.id.editBT);
-    bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (bluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())) {
-                if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1) == BluetoothAdapter.STATE_OFF) {
-                    buttonsearch.setEnabled(false);
-                    Toast.makeText(getApplicationContext(), "The broadcast on BT changing works", Toast.LENGTH_SHORT).show();
-                } else {
-                    buttonsearch.setEnabled(true);
-                }
-                Toast.makeText(getApplicationContext(), "State change", Toast.LENGTH_SHORT).show();//bluetooth not supported
-                Log.i("settings", "BT change");
-            }
-            if (bluetoothAdapter.ACTION_REQUEST_ENABLE.equals(intent.getAction())) {
-                Log.d("settings", "BT enable");
-            }
-            if (BluetoothDevice.ACTION_FOUND.equals(intent.getAction()) && !devices.contains((intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)))) {
-                isBroadcastRegsitered = true;
-                device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if (device.getName() != null) {
-                    Log.i("Settings", "a device has been found :" + device.getName());
-                    Toast.makeText(getApplicationContext(), "New device: " + device.getName(), Toast.LENGTH_SHORT).show();
-                    devices.add(device);
-                    adapter.notifyDataSetChanged();
-                }
-            }
-            if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(intent.getAction())) {
-                Log.i("Settings", "Search has finished");
-                textViewBT.setText("Search finished");
-                //updateListViewMain();
-            }
-        }
-    };
-    if (bluetoothAdapter == null) {
-        Toast.makeText(this, "Error Bluetooth, bluetooth not supported", Toast.LENGTH_SHORT).show();//bluetooth not supported
-        buttonsearch.setEnabled(false);
-        textViewBT.setText("No bluetooth module available");
-    } else {
-        if (bluetoothAdapter.isEnabled()) {
-            Toast.makeText(this, "Bluetooth is enabled", Toast.LENGTH_SHORT).show(); //bluetooth activated
-            textViewBT.setText("Bluetooth activated");
-
-        } else {
-            textViewBT.setText("Bluetooth module available, please turn it on then go back to the main menu and reload the settings");
-            Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBluetooth, REQUEST_ENABLE_BLUETOOTH);
-            if (!bluetoothAdapter.isEnabled()) {
-                buttonsearch.setEnabled(false);
-            } else {
-                buttonsearch.setEnabled(true);
-            }
-        }
-    }
-
-    buttonsearch.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-            if (bluetoothAdapter.isDiscovering() == Boolean.TRUE) {
-                bluetoothAdapter.cancelDiscovery();
-                textViewBT.setText("Search canceled");
-                updateListViewMain();
-
-            } else {
-                devices.clear();
-                bluetoothAdapter.startDiscovery();
-                textViewBT.setText("Search in progress...");
-                registerReceiver(broadcastReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
-                registerReceiver(broadcastReceiver, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
-                registerReceiver(broadcastReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
-
-            }
-        }
-    });
-
-    if ((bluetoothAdapter != null) && (bluetoothAdapter.isEnabled())) {
-        Set<BluetoothDevice> periphAppaires = bluetoothAdapter.getBondedDevices();
-        for (BluetoothDevice bluetoothDevice : periphAppaires) {
-            devicesAppaired.add(bluetoothDevice);
-            adapter2.notifyDataSetChanged();
-        }
-    }
-    back2.setOnClickListener(new View.OnClickListener() {       //button to go back to the main Menu
-        @Override
-        public void onClick(View v) {
-            Intent intent = new Intent(Settings.this, MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
-    });// end of the listener of the button back
-        */
 
     seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
         /**
@@ -259,88 +126,13 @@ private EditText edit2text;
         public void onStopTrackingTouch(SeekBar seekBar) {
             if (!success) {
                 Toast.makeText(Settings.this, "Permission Not granted", Toast.LENGTH_SHORT).show();
-                ;
+            }
+            if (success) {
+                setBrightness(200);
             }
         }
-    });
-    if(success) {
-        setBrightness(200);
+        });
     }
-    }
-    /*
-    deviceList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-        @RequiresApi(api = VERSION_CODES.KITKAT)
-        @Override
-        public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
-            bluetoothAdapter.cancelDiscovery();
-
-            Log.d("Settings_Pairing", "onItemClick: You Clicked on a device.");
-            String deviceName = devices.get(position).getName();
-            String deviceAddress = devices.get(position).getAddress();
-
-            Log.d("Settings_Pairing", "onItemClick: deviceName = " + deviceName);
-            Log.d("Settings_Pairing", "onItemClick: deviceAddress = " + deviceAddress);
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                Log.d("Settings_Pairing", "Trying to pair with " + devices.get(position).getName());
-                devices.get(position).createBond();
-                device = devices.get(position);
-                if (device.getBondState() == 12) {
-                    Toast.makeText(getApplicationContext(), "Your device :" + device.getName() + " has been paired successfully", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    if (device.getBondState() == 11) {
-                        Toast.makeText(getApplicationContext(), "Your device :" + device.getName() + " is pairing", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Your device :" + device.getName() + " has not been paired", Toast.LENGTH_SHORT).show();
-
-                    }
-                }
-                //bluetoothConnection = new BluetoothConnectionService(Settings.this);
-                  */
-                //Toast.makeText(getApplicationContext(), "Your device :"+device.getName() + " has been paired unless the user said no", Toast.LENGTH_SHORT).show();
-                //if ((device.getName().equals("RNBT-B100") /*the following par is ONLY for testing */ /*|| (device.getName().equals("olivier")))) {    //RNBT-1100 is the name of the bluetooth module on the robot
-                    /*
-                    AlertDialog.Builder myPopup = new AlertDialog.Builder(activity);
-                    myPopup.setTitle("You selected : " + device.getName());
-                    myPopup.setMessage("Would you like to open the control menu of the reobot?");
-                    myPopup.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(getApplicationContext(), "Clicked 'Yes'", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(Settings.this, Steering.class);
-                            startActivity(intent);
-                            finish();
-                        }
-                    });
-                    myPopup.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(getApplicationContext(), "Clicked 'No'", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    myPopup.show();
-                }
-
-
-
-            }
-            return true;
-        }
-    });
-    */
-    /**
-     * test part to communication BT
-     */
-    /*
-    send.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            bluetoothConnection.write(edit2text.getText().toString().getBytes());
-        }
-    });
-   }
-
-     */
 
     /**
      * This function interact with the system to adjust the brightness of the screen
@@ -357,7 +149,7 @@ private EditText edit2text;
         }
         ContentResolver contentResolver = getApplicationContext().getContentResolver();
         android.provider.Settings.System.putInt(contentResolver, android.provider.Settings.System.SCREEN_BRIGHTNESS, brightnessLocal);
-        //seekBar.setProgress(getBrightness());
+        seekBar.setProgress(getBrightness());
     }
 
     /**
@@ -417,55 +209,12 @@ private EditText edit2text;
     }
 
     /**
-     * Check if the permission for bluetooth are corrects
-
-    @RequiresApi(api = VERSION_CODES.M)
-    private void checkBTPermissions() {
-        if (Build.VERSION.SDK_INT > VERSION_CODES.LOLLIPOP) {
-            int permissionCheck = this.checkSelfPermission("Manisfest.permission.ACCESS_FINE_LOCATION");
-            permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
-            if (permissionCheck != 0) {
-                this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
-            } else {
-                Log.d("Settings", "Check permission for BT");
-            }
-        }
-    }
-*/
-    /**
-     * Check if there is a bluetooth module on the device
-     *
-     * @return true if there is a bluetooth module, false if there is no bluetooth module
-
-    private boolean checkForBTModule() {
-        Boolean module;
-        if (bluetoothAdapter == null) {
-            module = false;
-        } else {
-            module = true;
-        }
-        return module;
-    }
-*/
-    /**
-     * This function refresh the adapter with the news items in the lists
-     * Should bettre call .notifyDataSetChanged on the lists
-
-    public void updateListViewMain() {
-
-        adapter = new BluetoothArrayAdapter(this, R.layout.bt_devices, devices);
-        deviceList.setAdapter(adapter);
-        adapter2 = new BluetoothArrayAdapter(this, R.layout.bt_devices, devicesAppaired);
-        deviceAppairedList.setAdapter(adapter2);
-    }
-*/
-    /**
      * What has to be done when the application is paused
      */
     @Override
     protected void onPause() {
         super.onPause();
-        mySensorManager.unregisterListener((SensorEventListener) this);
+        //mySensorManager.unregisterListener((SensorEventListener) this);
     }
 
     /**
@@ -489,30 +238,9 @@ private EditText edit2text;
             boxAuto.setActivated(false);
         } else {
             Toast.makeText(this, "Light sensor found", Toast.LENGTH_SHORT).show();
-            mySensorManager.unregisterListener((SensorEventListener) Settings.this);
-
+            //mySensorManager.unregisterListener((SensorEventListener) Settings.this);
         }
     }
-
-    /**
-     * Implements what we do when the activity is destroyed (finished)
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d("Settings", "On destroy called");
-        if (!checkForBTModule() || !isBroadcastRegsitered) {
-
-        } else {
-            if (bluetoothAdapter.isDiscovering()) {
-                bluetoothAdapter.cancelDiscovery();
-            }
-            unregisterReceiver(broadcastReceiver);
-            isBroadcastRegsitered = false;
-        }
-
-    }
-    */
     /**
      * Implements the changes when the Light sensor change
      *
@@ -537,5 +265,13 @@ private EditText edit2text;
      */
     //@Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
+    public void goMain(View view){
+            Log.i("Settings","Button_back Clicked");
+            Intent intent = new Intent(
+                    Settings.this,
+                    MainActivity.class
+            );
+            startActivity(intent);
     }
 }

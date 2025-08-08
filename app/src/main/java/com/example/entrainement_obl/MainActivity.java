@@ -11,6 +11,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import android.util.Log;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -90,5 +91,13 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
+    }
+    public void buttonSettings(View view){
+        Log.i("Dev_Info","buttonBackClicked");
+        Intent intent = new Intent(
+                MainActivity.this,
+                Settings.class
+        );
+        startActivity(intent);
     }
 }

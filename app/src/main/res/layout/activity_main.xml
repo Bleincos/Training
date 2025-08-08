@@ -26,13 +26,13 @@
         android:id="@+id/buttonActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="54dp"
-        android:layout_marginBottom="132dp"
+        android:layout_marginBottom="140dp"
         android:text="Démarrer un programme"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewGif" />
+        app:layout_constraintTop_toBottomOf="@+id/imageViewGif"
+        app:layout_constraintVertical_bias="0.63" />
 
     <Button
         android:id="@+id/button_dev"
@@ -44,8 +44,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonActivity"
+        app:layout_constraintTop_toBottomOf="@+id/button_settings"
         app:layout_constraintVertical_bias="1.0"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/button_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="buttonSettings"
+        android:text="Paramètres"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonActivity"
+        app:layout_constraintVertical_bias="0.201"
         tools:ignore="MissingConstraints" />
 
     <ImageView
@@ -69,7 +83,7 @@
         app:layout_constraintHorizontal_bias="0.533"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.59" />
+        app:layout_constraintVertical_bias="0.542" />
 
     <Switch
         android:id="@+id/switchImage"
