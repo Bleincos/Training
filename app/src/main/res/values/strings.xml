@@ -5,5 +5,8 @@
     <string name="Minutes">Minutes</string>
     <string name="Secondes">Secondes</string>
     <string name="Rep">Répétitions</string>
+    <string name="Retour">Retour</string>
     <string name="Recup">Temps de récupération</string>
+    <string name="Repos">REPOS</string>
+    <string name="automatique">Automatique</string>
 </resources>

@@ -14,10 +14,12 @@ import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Printer;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,7 +27,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class Settings extends AppCompatActivity {
+public class Settings extends AppCompatActivity implements SensorEventListener{
 private static int valueMaxBrg = 255; // For the dev's device set it to 4096 for emulation set it to 255
 /**
  * Variables
@@ -33,16 +35,10 @@ private static int valueMaxBrg = 255; // For the dev's device set it to 4096 for
 public CheckBox boxAuto;
 public SensorManager mySensorManager;
 public Sensor sensorLight;
-
-        private Boolean success = false, bool;
+private Boolean success = false, bool;
 private int brightness = 0;
-
-//private final static int REQUEST_ENABLE_BLUETOOTH = 1;
 private SeekBar seekBar;
-
-//private Button send;
 private Activity activity;
-private EditText edit2text;
 
 /**
  * This is the elements call when the activity is create, the listenners and initialisations will be there or called from here
@@ -59,7 +55,7 @@ private EditText edit2text;
         }
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_settings);
-        Toast tooast = Toast.makeText(this, "Test", Toast.LENGTH_SHORT);
+        Toast tooast = Toast.makeText(this,"Valeur:"+getBrightness(), Toast.LENGTH_SHORT);
         tooast.show();
         /**
          * Pop up part
@@ -76,21 +72,22 @@ private EditText edit2text;
              Sensors part
              */
             boxAuto = findViewById(R.id.autolight);
-            Log.i("Settings", "TEST");
             boxAuto.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (boxAuto.isChecked()&& success) {
                         Toast.makeText(Settings.this, "The brightness will be set automatically", Toast.LENGTH_LONG).show();
                         mySensorManager.registerListener((SensorEventListener) Settings.this, sensorLight, mySensorManager.SENSOR_DELAY_NORMAL);
-
+                        android.provider.Settings.System.putInt(getContentResolver(),
+                                android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE, android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
                     } else {
                         if (success) {
-                            //mySensorManager.unregisterListener((SensorEventListener) Settings.this);
-                        }else{
+                            mySensorManager.unregisterListener((SensorEventListener) Settings.this);
+                            android.provider.Settings.System.putInt(getContentResolver(),
+                                    android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE, android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+                        }else {
                             Toast.makeText(Settings.this, "Permissions aren't granted", Toast.LENGTH_LONG).show();
                         }
-
                     }
                 }
             });
@@ -128,7 +125,7 @@ private EditText edit2text;
                 Toast.makeText(Settings.this, "Permission Not granted", Toast.LENGTH_SHORT).show();
             }
             if (success) {
-                setBrightness(200);
+                setBrightness(seekBar.getProgress());
             }
         }
         });
@@ -214,7 +211,7 @@ private EditText edit2text;
     @Override
     protected void onPause() {
         super.onPause();
-        //mySensorManager.unregisterListener((SensorEventListener) this);
+        mySensorManager.unregisterListener((Settings.this));
     }
 
     /**
@@ -238,7 +235,7 @@ private EditText edit2text;
             boxAuto.setActivated(false);
         } else {
             Toast.makeText(this, "Light sensor found", Toast.LENGTH_SHORT).show();
-            //mySensorManager.unregisterListener((SensorEventListener) Settings.this);
+            mySensorManager.unregisterListener(Settings.this);
         }
     }
     /**
@@ -250,7 +247,7 @@ private EditText edit2text;
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
             if (boxAuto.isChecked()) {
-                brightness = (int) (event.values[0]); // convert value, Max is 40 000 and max brightness is 255 for the emulated device so 40 000/ 255 equals to 156.8627 40 000/4096 equals 9.765625
+                brightness = (int) (event.values[0]);// convert value, Max is 40 000 and max brightness is 255 for the emulated device so 40 000/ 255 equals to 156.8627 40 000/4096 equals 9.765625
                 setBrightness(brightness);
                 seekBar.setProgress(getBrightness());
             }

@@ -3,6 +3,7 @@ package com.example.entrainement_obl;
 //import android.graphics.ImageDecoder;
 import android.annotation.SuppressLint;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     Button buttonActivity, button_dev;
     Switch switchimage;
     int []images;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

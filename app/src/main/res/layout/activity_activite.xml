@@ -7,26 +7,16 @@
     android:layout_height="match_parent"
     tools:context=".activite">
 
-    <Chronometer
-        android:id="@+id/chronos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.21" />
-
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="409dp"
-        android:layout_height="140dp"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5">
+        app:layout_constraintVertical_bias="0.25">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -40,7 +30,7 @@
                 android:text="@string/Rep" />
 
             <EditText
-                android:id="@+id/min"
+                android:id="@+id/Rep"
                 android:layout_width="134dp"
                 android:layout_height="match_parent"
                 android:ems="10"
@@ -60,7 +50,7 @@
                 android:text="@string/Minutes" />
 
             <EditText
-                android:id="@+id/Rep"
+                android:id="@+id/min"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ems="10"
@@ -77,30 +67,20 @@
                 android:id="@+id/textView4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="0"
                 android:text="@string/Secondes" />
 
             <EditText
                 android:id="@+id/sec"
                 android:layout_width="wrap_content"
-                android:layout_height="89dp"
+                android:layout_height="80dp"
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="@string/Secondes"
-                android:inputType="number"/>
+                android:inputType="number" />
         </LinearLayout>
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/Remain"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Temps écoulé"
-        app:layout_constraintBottom_toTopOf="@+id/chronos"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/button_go"
@@ -109,8 +89,10 @@
         android:text="GO!"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_bias="0.741" />
 
     <Button
         android:id="@+id/button_back"
@@ -123,7 +105,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_go"
-        app:layout_constraintVertical_bias="0.453" />
+        app:layout_constraintVertical_bias="0.333" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
@@ -133,12 +115,13 @@
         app:layout_constraintGuide_begin="20dp" />
 
     <LinearLayout
-        android:layout_width="413dp"
-        android:layout_height="101dp"
+        android:layout_width="410dp"
+        android:layout_height="100dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/button_go"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_bias="0.25">
 
         <TextView
             android:id="@+id/textView2"
@@ -147,11 +130,25 @@
             android:text="@string/Recup" />
 
         <EditText
-            android:id="@+id/editText_Recup"
-            android:layout_width="435dp"
-            android:layout_height="62dp"
+            android:id="@+id/Rec"
+            android:layout_width="match_parent"
+            android:layout_height="59dp"
             android:ems="10"
+            android:hint="@string/Secondes"
             android:inputType="number" />
     </LinearLayout>
+
+    <Chronometer
+        android:id="@+id/chrono"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-black"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.477"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.071" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
