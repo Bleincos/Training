@@ -3,6 +3,7 @@ package com.example.entrainement_obl;
 //import android.graphics.ImageDecoder;
 import android.annotation.SuppressLint;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
                             Dev_Info.class
                         );
                         startActivity(intent);
+                        finish();
                     }
                 }
         );
@@ -90,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
                                 activite.class
                         );
                         startActivity(intent);
+                        finish();
                     }
                 }
         );
@@ -101,5 +104,6 @@ public class MainActivity extends AppCompatActivity {
                 Settings.class
         );
         startActivity(intent);
+        finish();
     }
 }

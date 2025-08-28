@@ -45,6 +45,7 @@ public class Dev_Info extends AppCompatActivity {
                 MainActivity.class
         );
         startActivity(intent);
+        finish();
     }
 
     /**

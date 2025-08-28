@@ -270,5 +270,6 @@ private Activity activity;
                     MainActivity.class
             );
             startActivity(intent);
+            finish();
     }
 }
