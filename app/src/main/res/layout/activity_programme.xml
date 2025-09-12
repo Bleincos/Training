@@ -11,76 +11,91 @@
         android:id="@+id/remain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="236dp"
+        android:layout_marginTop="288dp"
+        android:fontFamily="sans-serif-black"
         android:text="Temps écoulé"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+        android:textColor="@color/black"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Chronometer
-        android:id="@+id/chrono1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/chronoTrain"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
         android:fontFamily="sans-serif-black"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="34sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.376" />
+        app:layout_constraintVertical_bias="0.499" />
 
     <TextView
         android:id="@+id/textViewMin"
-        android:layout_width="115dp"
-        android:layout_height="48dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:fontFamily="sans-serif-black"
         android:text="@string/Minutes"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textColor="#020202"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.135"
+        app:layout_constraintHorizontal_bias="0.061"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.14" />
+        app:layout_constraintVertical_bias="0.186" />
 
     <TextView
         android:id="@+id/textViewSecondes"
-        android:layout_width="115dp"
-        android:layout_height="48dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:fontFamily="sans-serif-black"
         android:text="@string/Secondes"
+        android:textColor="@color/black"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.763"
+        app:layout_constraintHorizontal_bias="0.938"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.14" />
+        app:layout_constraintVertical_bias="0.186" />
 
     <TextView
         android:id="@+id/textViewRep"
-        android:layout_width="88dp"
-        android:layout_height="48dp"
+        android:layout_width="135dp"
+        android:layout_height="100dp"
+        android:fontFamily="sans-serif-black"
         android:text="@string/Rep"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+        android:textColor="#040303"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.479"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.04" />
+        app:layout_constraintVertical_bias="0.023" />
 
     <ImageButton
         android:id="@+id/imageButton2"
         style="@android:style/Widget.Holo.Light.ImageButton"
         android:layout_width="180dp"
         android:layout_height="180dp"
+        android:layout_marginBottom="64dp"
         android:background="@drawable/button_states"
         android:backgroundTint="@color/white"
-        android:scaleType="centerCrop"
         android:onClick="callStop"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.917"
         app:srcCompat="@drawable/stop" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

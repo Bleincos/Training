@@ -32,17 +32,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
+import java.io.IOException;
+
 public class activite extends AppCompatActivity implements SensorEventListener {
     //private int duration = 120;
     public long elapseRealTime = SystemClock.elapsedRealtime();
     public SensorManager mySensorManager;
     public Sensor sensorLight;
     public static int valueMaxBrg = 255;
-    //public Chronometer chronos =findViewById(R.id.chrono);
-    //public Chronometer chronos1 = findViewById(R.id.chrono1);
-    public int[] tab = new int[4]; // [0] minutes [1] secondes [2] répétitions [3] temps de récup.
-    private Boolean success = false, bool;
+    public int[] tab = new int[4]; // [0] répétitions [1] minutes [2] secondes [3] temps de récup.
+    private Boolean success = false, bool,stop, boolCh; //success and bool are used for the screenBrighness, stop to stop the training and boolCh for the chronometers.
     public MediaPlayer buzz, bip;
+    public long chronotrainBase=0;
+    public CharSequence tempsecoule="0.00";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +53,17 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         setContentView(R.layout.activity_activite);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.top);
             return insets;
         });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getPermissionBrightness();
             checkSensor();
         }
+        main();
+    }
+    public void main(){
+        setContentView(R.layout.activity_activite);
         Button buttonLaunch;
         EditText editRep, editMin,editSec, editRec;
         editRep= findViewById(R.id.Rep);
@@ -65,22 +71,26 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         editSec = findViewById(R.id.sec);
         editRec = findViewById(R.id.Rec);
         buttonLaunch= findViewById(R.id.button_go);
+        stop = false;
+        Chronometer chronometerSet = findViewById(R.id.chronoSet);
+        chronometerSet.setText(tempsecoule);
+        //chronometerSet.setBase(elapseRealTime);
         //chronos.setBase(elapseRealTime+chronos1.getBase());
         buttonLaunch.setOnClickListener (new View.OnClickListener() {
             public void onClick(View v) {
-                if (editRep.getText().toString().equals("") || editMin.getText().toString().equals("") || editSec.getText().toString().equals("") ||editRec.getText().toString().equals("")) {
+                if (editRep.getText().toString().equals("") || editMin.getText().toString().equals("") || editSec.getText().toString().equals("") ||editRec.getText().toString().equals("")||editRep.getText().toString().equals(("0"))) {
                     Toast toaast = Toast.makeText(activite.this, "Les valeurs saisies sont incorrectes", Toast.LENGTH_SHORT);
                     toaast.show();
                     //toaast = Toast.makeText(activite.this, chronos.getText(), Toast.LENGTH_SHORT);
                     //toaast.show();
                 }else{
-                tab[0] = Integer.parseInt(editRep.getText().toString()); // Récupération des minutes
+                tab[0] = Integer.parseInt(editRep.getText().toString()); // Récupération des répétitions
                 Log.i("Activite_Min", "min_saisies");
                 Log.e("Activity", "Erreur de minutes");
-                tab[1] = Integer.parseInt(editMin.getText().toString()); // récupération des secondes
+                tab[1] = Integer.parseInt(editMin.getText().toString()); // récupération des minutes
                 System.out.println(tab[1]);
                 Log.i("Activite_Sec", "sec_saisies");
-                tab[2] = Integer.parseInt(editSec.getText().toString()); // récupération des répétitions
+                tab[2] = Integer.parseInt(editSec.getText().toString()); // récupération des secondes
                 Log.i("Activite_Min", "min_saisies");
                 Log.e("Activity", "Erreur de minutes");
                 System.out.println(tab[2]);
@@ -115,12 +125,13 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         //RelativeLayout layout =findViewById(R.id.activity_demarrage);
         new CountDownTimer (4000, 1000){
             public void onFinish(){
-                //soundDépart.stop();
+                boolCh = false;
                 debut_entrainement();
             }
             public void onTick(long l){
                if(l/1000<1) {
                    onFinish();
+                   cancel();
                 }
                temps.setText(""+l/1000);
                switch ((int) (l/1000)) {
@@ -154,34 +165,37 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         TextView sec = findViewById(R.id.textViewSecondes);
         TextView rep = findViewById(R.id.textViewRep);
         buzz = MediaPlayer.create(this,R.raw.bip);
-        bip =MediaPlayer.create(this, R.raw.longbip);
-        //chronos1.start();
+        bip = MediaPlayer.create(this, R.raw.longbip);
+        Chronometer chronosTraining= findViewById(R.id.chronoTrain);
+        if(boolCh){
+            chronosTraining.setBase(chronotrainBase);
+        }
+        chronosTraining.start();
         Log.i("Avancement","Récup des id");
         rep.setText("Répétitions : "+tab[0]);
-        minutes.setText("Minutes restantes :"+tab[1]);
-        sec.setText("Secondes restantes :"+tab[2]);
+        minutes.setText("Minutes restantes : "+tab[1]);
+        sec.setText("Secondes restantes : "+tab[2]);
         new CountDownTimer(tab[1]*60*1000+tab[2] * 1000, 1000){
             @Override
             public void onFinish(){
-                //Toast toaast = Toast.makeText(activite.this, "Good Job"+ chronos1.getBase(), Toast.LENGTH_SHORT);
-                //toaast.show();
-                //chronos1.stop();
                 bip.start();
+                chronotrainBase=chronosTraining.getBase();
+                chronosTraining.stop();
                 callRecup();
             }
             @Override
             public void onTick(long l) {
                 if(l/60000>=1) {
-                    sec.setText("Secondes restantes :" +(l%60000)/1000);
+                    sec.setText("Secondes restantes : " +(l%60000)/1000);
                     minutes.setText("Minutes restantes :" +l/60000);
                 }else{
                         minutes.setText("Minutes restantes : 0");
-                        sec.setText("Secondes Restantes :"+l/1000);
+                        sec.setText("Secondes Restantes : "+l/1000);
                 }
-                if(l/1000 <=3) {
+                if(l/1000 <3) {
                     buzz.start();
-                }if(l/1000<1){
-                    onFinish();
+                }if(stop) {
+                    cancel();
                 }
             }
         }.start();
@@ -195,31 +209,41 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         ImageView imageViewGif = findViewById(R.id.imageViewGif2);
         Glide.with(this).load(R.drawable.repos).into(imageViewGif);
         TextView tempsRest = findViewById(R.id.Repos_restant);
+        Chronometer chronoRecup=findViewById(R.id.chronoRecup);
+        chronoRecup.setBase(chronotrainBase);
+        chronoRecup.start();
         buzz = MediaPlayer.create(this,R.raw.bip);
         bip = MediaPlayer.create(this, R.raw.longbip);
+        MediaPlayer endbip = MediaPlayer.create(this,R.raw.endbip);
+
 
         new CountDownTimer((long) tab[3] * 1000, 1000) {
             @Override
             public void onFinish() {
                 Toast toaast = Toast.makeText(activite.this, "Timer Finish!!", Toast.LENGTH_SHORT);
                 toaast.show();
-                if(tab[0]!=0){
+                if(tab[0]!=1){ // machine count the 0 while everybody starts from 1 so we finish the last rep at 1 (function call at the end of the set so)
                     tab[0]--;
                     bip.start();
+                    boolCh=true;
                     debut_entrainement();
                 }else{
+                    endbip.start();
                     toaast= Toast.makeText(activite.this,"TRAINING COMPLETE, WOW!",Toast.LENGTH_SHORT);
                     toaast.show();
-                    setContentView(R.layout.activity_activite);
+                    chronoRecup.stop();
+                    tempsecoule=chronoRecup.getText();
+                    main();
+                    //setContentView(R.layout.activity_activite);
                 }
             }
             public void onTick(long l) {
-                if(l/1000 <4){
+                if(l/1000 <3){
                     buzz.start();
-                }if(l/1000>=1){
-                tempsRest.setText("Secondes restantes :"+l/1000);
-                }else{
-                    onFinish();
+                }
+                tempsRest.setText("Secondes restantes : "+l/1000);
+                if(stop){
+                    cancel();
                 }
             }
         }.start();
@@ -314,6 +338,8 @@ public class activite extends AppCompatActivity implements SensorEventListener {
      */
     public void callStop(View View){
         buzz.stop();
+        bip.stop();
+        stop=true;
             Intent intent = new Intent(this,
                     activite.class
             );
