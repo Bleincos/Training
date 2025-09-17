@@ -27,6 +27,7 @@ import androidx.core.view.WindowInsetsCompat;
 import android.widget.EditText;
 import android.widget.Chronometer;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -74,8 +75,6 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         stop = false;
         Chronometer chronometerSet = findViewById(R.id.chronoSet);
         chronometerSet.setText(tempsecoule);
-        //chronometerSet.setBase(elapseRealTime);
-        //chronos.setBase(elapseRealTime+chronos1.getBase());
         buttonLaunch.setOnClickListener (new View.OnClickListener() {
             public void onClick(View v) {
                 if (editRep.getText().toString().equals("") || editMin.getText().toString().equals("") || editSec.getText().toString().equals("") ||editRec.getText().toString().equals("")||editRep.getText().toString().equals(("0"))) {
@@ -345,5 +344,27 @@ public class activite extends AppCompatActivity implements SensorEventListener {
             );
             startActivity(intent);
             finish();
+        }
+        public void saveAtraining(){
+            EditText editRep, editMin,editSec, editRec, editName;
+            String name;
+            int rep, min, sec, rec;
+            editRep= findViewById(R.id.Rep);
+            editMin = findViewById(R.id.min);
+            editSec = findViewById(R.id.sec);
+            editRec = findViewById(R.id.Rec);
+            editName = findViewById(R.id.Name);
+            name = editName.getText().toString();
+            rep = Integer.parseInt(editRep.getText().toString());
+            min = Integer.parseInt(editMin.getText().toString());
+            sec=Integer.parseInt(editSec.getText().toString());
+            rec=Integer.parseInt(editRec.getText().toString());
+           if (editRep.getText().toString().equals("") || editMin.getText().toString().equals("") || editSec.getText().toString().equals("") ||editRec.getText().toString().equals("")||editRep.getText().toString().equals(("0"))||editName.getText().equals("")) {
+                    Toast toaast = Toast.makeText(activite.this, "Les valeurs saisies sont incorrectes", Toast.LENGTH_SHORT);
+                    toaast.show();
+                }else{
+               //if(Singleton.getInstance().state==Boolean.TRUE) // on edite?
+               EntrainementType entrainementType= new EntrainementType(name,rep, min,sec,rec);
+           }
         }
 }

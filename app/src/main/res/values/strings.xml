@@ -9,4 +9,6 @@
     <string name="Recup">Temps de récupération</string>
     <string name="Repos">REPOS</string>
     <string name="automatique">Automatique</string>
+    <string name="Name_training">Nom de l\'entrainement</string>
+    <string name="Edit">Editer</string>
 </resources>

@@ -7,6 +7,16 @@
     android:layout_height="match_parent"
     tools:context=".activite">
 
+    <EditText
+        android:id="@+id/Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/Name_training"
+        android:inputType="text"
+        tools:layout_editor_absoluteX="100dp"
+        tools:layout_editor_absoluteY="240dp" />
+
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
@@ -16,7 +26,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.25">
+        app:layout_constraintVertical_bias="0.20">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -31,7 +41,7 @@
 
             <EditText
                 android:id="@+id/Rep"
-                android:layout_width="134dp"
+                android:layout_width="100dp"
                 android:layout_height="match_parent"
                 android:ems="10"
                 android:hint="@string/Rep"
@@ -45,7 +55,7 @@
 
             <TextView
                 android:id="@+id/textView6"
-                android:layout_width="105dp"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:text="@string/Minutes" />
 
@@ -59,7 +69,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
@@ -72,9 +82,33 @@
 
             <EditText
                 android:id="@+id/sec"
-                android:layout_width="wrap_content"
-                android:layout_height="80dp"
+                android:layout_width="match_parent"
+                android:layout_height="87dp"
                 android:layout_weight="1"
+                android:ems="10"
+                android:hint="@string/Secondes"
+                android:inputType="number" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/button_go"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+            app:layout_constraintVertical_bias="0.692" >
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Recup" />
+
+            <EditText
+                android:id="@+id/Rec"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:ems="10"
                 android:hint="@string/Secondes"
                 android:inputType="number" />
@@ -86,13 +120,28 @@
         android:id="@+id/button_go"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+
         android:text="GO!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:layout_constraintVertical_bias="0.741" />
+        tools:layout_editor_absoluteX="296dp"
+        tools:layout_editor_absoluteY="657dp" />
+
+    <Button
+        android:id="@+id/button_Save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="Sauvegarder"
+        tools:layout_editor_absoluteX="141dp"
+        tools:layout_editor_absoluteY="298dp" />
+
+    <Button
+        android:id="@+id/button_Edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="@string/Edit"
+        tools:layout_editor_absoluteX="161dp"
+        tools:layout_editor_absoluteY="657dp" />
 
     <Button
         android:id="@+id/button_back"
@@ -100,12 +149,8 @@
         android:layout_height="wrap_content"
         android:onClick="buttonBackMain"
         android:text="@string/Back"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_go"
-        app:layout_constraintVertical_bias="0.333" />
+        tools:layout_editor_absoluteX="30dp"
+        tools:layout_editor_absoluteY="657dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
@@ -115,27 +160,12 @@
         app:layout_constraintGuide_begin="1dp" />
 
     <LinearLayout
-        android:layout_width="410dp"
-        android:layout_height="100dp"
+        android:layout_width="411dp"
+        android:layout_height="220dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/button_go"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:layout_constraintVertical_bias="0.25">
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="406dp">
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="match_parent"
-            android:layout_height="36dp"
-            android:text="@string/Recup" />
-
-        <EditText
-            android:id="@+id/Rec"
-            android:layout_width="match_parent"
-            android:layout_height="59dp"
-            android:ems="10"
-            android:hint="@string/Secondes"
-            android:inputType="number" />
     </LinearLayout>
 
     <Chronometer
