@@ -67,8 +67,8 @@
 
     <TextView
         android:id="@+id/Repos_restant"
-        android:layout_width="150dp"
-        android:layout_height="96dp"
+        android:layout_width="219dp"
+        android:layout_height="94dp"
         android:layout_marginTop="20dp"
         android:fontFamily="sans-serif-black"
         android:text=""

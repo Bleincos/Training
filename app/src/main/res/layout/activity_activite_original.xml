@@ -11,11 +11,17 @@
         android:id="@+id/Name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
         android:ems="10"
         android:hint="@string/Name_training"
         android:inputType="text"
-        tools:layout_editor_absoluteX="100dp"
-        tools:layout_editor_absoluteY="240dp" />
+        android:minHeight="48dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_bias="0.0" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -97,7 +103,7 @@
             app:layout_constraintBottom_toTopOf="@+id/button_go"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-            app:layout_constraintVertical_bias="0.692" >
+            app:layout_constraintVertical_bias="0.692">
 
             <TextView
                 android:id="@+id/textView2"
@@ -121,18 +127,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
+        android:layout_marginTop="8dp"
         android:text="GO!"
-        tools:layout_editor_absoluteX="296dp"
-        tools:layout_editor_absoluteY="657dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.907"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.921" />
 
     <Button
         android:id="@+id/button_Save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
+        android:onClick="saveAtraining"
         android:text="Sauvegarder"
-        tools:layout_editor_absoluteX="141dp"
-        tools:layout_editor_absoluteY="298dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.48" />
 
     <Button
         android:id="@+id/button_Edit"
@@ -140,8 +155,12 @@
         android:layout_height="wrap_content"
 
         android:text="@string/Edit"
-        tools:layout_editor_absoluteX="161dp"
-        tools:layout_editor_absoluteY="657dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.922" />
 
     <Button
         android:id="@+id/button_back"
@@ -149,8 +168,12 @@
         android:layout_height="wrap_content"
         android:onClick="buttonBackMain"
         android:text="@string/Back"
-        tools:layout_editor_absoluteX="30dp"
-        tools:layout_editor_absoluteY="657dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.092"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.922" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
@@ -158,15 +181,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="1dp" />
-
-    <LinearLayout
-        android:layout_width="411dp"
-        android:layout_height="220dp"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="406dp">
-
-    </LinearLayout>
 
     <Chronometer
         android:id="@+id/chronoSet"
@@ -193,5 +207,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.629" />
+
+    <ListView
+        android:id="@+id/listeEntrainement"
+        android:layout_width="357dp"
+        android:layout_height="208dp"
+        android:background="#BC1919"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.738" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

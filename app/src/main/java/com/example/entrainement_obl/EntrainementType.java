@@ -9,10 +9,15 @@ public class EntrainementType {
 
     public EntrainementType(String name, int repetitions, int minutes, int secondes, int recuperation){
         this.name=name;
+        this.repetitions=repetitions;
         this.minutes=minutes;
         this.secondes=secondes;
         this.recuperation=recuperation;
     }
+    /**
+     * Functions explicits
+     * @param name
+     */
     public void setName(String name){
         this.name=name;
     }

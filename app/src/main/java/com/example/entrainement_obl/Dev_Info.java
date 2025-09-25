@@ -38,23 +38,14 @@ public class Dev_Info extends AppCompatActivity {
      * Function to return to main activity
      * @param view
      */
-    public void buttonBackMain(View view){
-        Log.i("Dev_Info","buttonBackClicked");
+    public void buttonBackMain(View view) {
+        Log.i("Dev_Info", "buttonBackClicked");
         Intent intent = new Intent(
                 Dev_Info.this,
                 MainActivity.class
         );
         startActivity(intent);
         finish();
-    }
-
-    /**
-     * Function to show context, just for fun
-     */
-    public void tooaster(){
-        Log.i("Dev_info","Imageclickde");
-        Toast toaster = Toast.makeText(this,"Oui c'est bien le dev :)",Toast.LENGTH_SHORT);
-        toaster.show();
     }
 
 }

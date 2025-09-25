@@ -21,21 +21,34 @@ public class EntrainementAdapter extends ArrayAdapter<EntrainementType> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
         EntrainementAspect aspect= null;
+        // Check if an existing view is being reused, otherwise inflate the view
         if (convertView==null){
             convertView= LayoutInflater.from(getContext()).inflate(R.layout.items,parent,false);
         }
         aspect = new EntrainementAspect();
-        aspect.Name=(TextView) convertView.findViewById(R.id.Name);
-        aspect.Rep = (TextView) convertView.findViewById(R.id.Rep);
-        aspect.min=(TextView) convertView.findViewById(R.id.min);
-        aspect.sec=(TextView) convertView.findViewById(R.id.sec);
+        aspect.Name=(TextView) convertView.findViewById(R.id.NameE);
+        aspect.Rep = (TextView) convertView.findViewById(R.id.Repp);
+        aspect.min=(TextView) convertView.findViewById(R.id.Mins);
+        aspect.sec=(TextView) convertView.findViewById(R.id.Secs);
+        aspect.rec=(TextView) convertView.findViewById(R.id.Recc);
+
+        EntrainementType item = getItem(position);
+        if (item != null) {
+            aspect.Name.setText(item.name);
+            aspect.Rep.setText(item.repetitions);
+            aspect.min.setText(item.minutes);
+            aspect.sec.setText(item.secondes);
+            aspect.rec.setText(item.recuperation);
+
+        }
         return convertView;
     }
-    private class EntrainementAspect{
+    private static class EntrainementAspect{
         public TextView Name;
         public TextView Rep;
         public TextView min;
         public TextView sec;
+        public TextView rec;
 
     }
 }
