@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.util.Log;
 
@@ -29,23 +30,26 @@ import android.widget.EditText;
 import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.PopupMenu;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.Signature;
+import java.io.OutputStreamWriter;
+import java.nio.file.Files;
 
 public class activite extends AppCompatActivity implements SensorEventListener {
-    //private int duration = 120;
     public long elapseRealTime = SystemClock.elapsedRealtime();
     public SensorManager mySensorManager;
     public Sensor sensorLight;
     public static int valueMaxBrg = 255;
     public int[] tab = new int[4]; // [0] répétitions [1] minutes [2] secondes [3] temps de récup.
-    private Boolean success = false, bool, stop, boolCh; //success and bool are used for the screenBrighness, stop to stop the training and boolCh for the chronometers.
+    private Boolean success = false, bool, stop, boolCh, norecup,init; //success and bool are used for the screenBrighness, stop to stop the training and boolCh for the chronometers, norecup is used to determine if the user want to recup (if not a function isn't called) and init is used to know if the activity is initialized or not (to set digit in the textview).
     public MediaPlayer buzz, bip;
     public long chronotrainBase = 0;
     public CharSequence tempsecoule = "0.00";
@@ -53,6 +57,10 @@ public class activite extends AppCompatActivity implements SensorEventListener {
     ListView listEntrainement;
     public int  position=0;
 
+    /**
+     * method called on creation
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,32 +76,71 @@ public class activite extends AppCompatActivity implements SensorEventListener {
             checkSensor();
         }
         listEntrainement = findViewById(R.id.listeEntrainement);
-        EntrainementType entrainementType1 = new EntrainementType("TEST",10,5,10,1);
-        Singleton.getInstance().entrainements.add(entrainementType1);
+        EntrainementType entrainementParDéfaut = new EntrainementType("Entrainement par défaut",5,0,40,20);
+        Singleton.getInstance().entrainements.add(entrainementParDéfaut);
         Toast toast = Toast.makeText(activite.this, Singleton.getInstance().entrainements.get(Singleton.getInstance().i).name,Toast.LENGTH_SHORT);
         toast.show();
+        init = true;
         main();
     }
 
+    /**
+     * main, allows to loop and go back to the settings of the training
+     */
     public void main() {
         setContentView(R.layout.activity_activite_original);
         Button buttonLaunch;
-        EditText editRep, editMin, editSec, editRec;
+        EditText editRep, editMin, editSec, editRec, editName;
         editRep = findViewById(R.id.Rep);
         editMin = findViewById(R.id.min);
         editSec = findViewById(R.id.sec);
         editRec = findViewById(R.id.Rec);
+        editName = findViewById(R.id.Name);
         buttonLaunch = findViewById(R.id.button_go);
         stop = false;
         Chronometer chronometerSet = findViewById(R.id.chronoSet);
         chronometerSet.setText(tempsecoule);
         updateListView();
+        if (!init){
+            editRep.setText(""+tab[0]);
+            editMin.setText(""+tab[1]);
+            editSec.setText(""+tab[2]);
+            editRec.setText(""+tab[3]);
+        }
+        listEntrainement.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView,
+                                           View view, int i, long l) {
+                Singleton.getInstance().entrainements.remove(i);
+                updateListView();
+                Toast toast = Toast.makeText(activite.this, "Ohhhh",Toast.LENGTH_SHORT);
+                toast.show();
+                return true;
+            }
+        });
+        listEntrainement.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                editName.setText(""+Singleton.getInstance().entrainements.get(position).name);
+                editRep.setText(""+Singleton.getInstance().entrainements.get(position).repetitions);
+                editMin.setText(""+Singleton.getInstance().entrainements.get(position).minutes);
+                editSec.setText(""+Singleton.getInstance().entrainements.get(position).secondes);
+                editRec.setText(""+Singleton.getInstance().entrainements.get(position).recuperation);
+                Toast toast = Toast.makeText(activite.this, "ehhhhh",Toast.LENGTH_SHORT);
+                toast.show();
+                /*
+                Intent intent = new Intent(activite.this, class);
+                Singleton.getInstance().state=Boolean.TRUE;
+                Singleton.getInstance().i=position;
+                startActivity(intent);
+                finish();
+
+                 */
+            }
+        });
         buttonLaunch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (editRep.getText().toString().isEmpty() || editMin.getText().toString().equals("") || editSec.getText().toString().equals("") || editRec.getText().toString().equals("") || editRep.getText().toString().equals(("0"))) {
-                    Toast toaast = Toast.makeText(activite.this, "Les valeurs saisies sont incorrectes", Toast.LENGTH_SHORT);
-                    toaast.show();
-                } else {
+                if (checkValues()){
                     tab[0] = Integer.parseInt(editRep.getText().toString()); // Récupération des répétitions
                     Log.i("Activite_Min", "min_saisies");
                     Log.e("Activity", "Erreur de minutes");
@@ -106,6 +153,12 @@ public class activite extends AppCompatActivity implements SensorEventListener {
                     System.out.println(tab[2]);
                     tab[3] = Integer.parseInt(editRec.getText().toString()); // récupération des temps de récupération
                     Log.i("Activite_Sec", "sec_saisies");
+                    if(editRep.getText().toString().equals("0")){
+                        norecup=true;
+                    }else{
+                        norecup=false;
+                    }
+                    init=false;
                     demarrage();
                 }
             }
@@ -119,6 +172,7 @@ public class activite extends AppCompatActivity implements SensorEventListener {
      */
     public void buttonBackMain(View view) {
         Log.i("Activite", "buttonBackClicked");
+        FilesaveATraining(activite.this);
         Intent intent = new Intent(
                 activite.this,
                 MainActivity.class
@@ -127,6 +181,9 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         finish();
     }
 
+    /**
+     * method at the beginning of the training (just graphic and sound)
+     */
     public void demarrage() {
         setContentView(R.layout.activity_demarrage);
         TextView temps;
@@ -138,7 +195,7 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         new CountDownTimer(4000, 1000) {
             public void onFinish() {
                 boolCh = false;
-                debut_entrainement();
+                    debut_entrainement();
             }
 
             public void onTick(long l) {
@@ -180,6 +237,7 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         TextView rep = findViewById(R.id.textViewRep);
         buzz = MediaPlayer.create(this, R.raw.bip);
         bip = MediaPlayer.create(this, R.raw.longbip);
+        MediaPlayer endbip = MediaPlayer.create(this, R.raw.endbip);
         Chronometer chronosTraining = findViewById(R.id.chronoTrain);
         if (boolCh) {
             chronosTraining.setBase(chronotrainBase);
@@ -195,7 +253,21 @@ public class activite extends AppCompatActivity implements SensorEventListener {
                 bip.start();
                 chronotrainBase = chronosTraining.getBase();
                 chronosTraining.stop();
-                callRecup();
+                if(norecup){
+                    if (tab[0] != 1) { // machine count the 0 while everybody starts from 1 so we finish the last rep at 1 (function call at the end of the set so)
+                        tab[0]--;
+                        bip.start();
+                        boolCh = true;
+                        debut_entrainement();
+                    }else {
+                        endbip.start();
+                        Toast toaast = Toast.makeText(activite.this, "TRAINING COMPLETE, WOW!", Toast.LENGTH_SHORT);
+                        toaast.show();
+                        main();
+                    }
+                }else {
+                    callRecup();
+                }
             }
 
             @Override
@@ -327,10 +399,13 @@ public class activite extends AppCompatActivity implements SensorEventListener {
     @Override
     protected void onResume() {
         super.onResume();
-        updateListView();
+        //updateListView();
         mySensorManager.registerListener(activite.this, sensorLight, mySensorManager.SENSOR_DELAY_NORMAL);
     }
 
+    /**
+     * explicit
+     */
     public void onDestroy() {
         android.provider.Settings.System.putInt(getContentResolver(),
                 android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE, android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
@@ -363,13 +438,20 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         buzz.stop();
         bip.stop();
         stop = true;
+        main();
+        /**
         Intent intent = new Intent(this,
                 activite.class
         );
         startActivity(intent);
         finish();
+         */
     }
 
+    /**
+     * method to save a training and screen it in the listView
+     * @param view
+     */
     public void saveAtraining(View view) {
         EditText editRep, editMin, editSec, editRec, editName;
         String name;
@@ -379,31 +461,105 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         editSec = findViewById(R.id.sec);
         editRec = findViewById(R.id.Rec);
         editName = findViewById(R.id.Name);
-        name = editName.getText().toString();
-        rep = Integer.parseInt(editRep.getText().toString());
-        min = Integer.parseInt(editMin.getText().toString());
-        sec = Integer.parseInt(editSec.getText().toString());
-        rec = Integer.parseInt(editRec.getText().toString());
-        if (editRep.getText().toString().equals("") || editMin.getText().toString().equals("") || editSec.getText().toString().equals("") || editRec.getText().toString().equals("") || editRep.getText().toString().equals(("0")) || editName.getText().equals("")) {
+
+        /*if (editRep.getText().toString().equals("") || editMin.getText().toString().equals("") || editSec.getText().toString().equals("") || editRec.getText().toString().equals("") || editRep.getText().toString().equals(("0")) || editName.getText().equals("")) {
             Toast toaast = Toast.makeText(activite.this, "Les valeurs saisies sont incorrectes", Toast.LENGTH_SHORT);
             toaast.show();
-        } else {
+        }
+        else*/
+            if(checkValues()) {
+            name = editName.getText().toString();
+            rep = Integer.parseInt(editRep.getText().toString());
+            min = Integer.parseInt(editMin.getText().toString());
+            sec = Integer.parseInt(editSec.getText().toString());
+            rec = Integer.parseInt(editRec.getText().toString());
             //if(Singleton.getInstance().state==Boolean.TRUE) // on edite?
             EntrainementType entrainementType = new EntrainementType(name, rep, min, sec, rec);
             Singleton.getInstance().entrainements.add(entrainementType);
+            position++;
+            Singleton.getInstance().i=position;
+            Toast toast = Toast.makeText(activite.this, Singleton.getInstance().entrainements.get(Singleton.getInstance().i).name,Toast.LENGTH_SHORT);
+            toast.show();
+            updateListView();
         }
-        position++;
-        Singleton.getInstance().i=position;
-        EntrainementType trainnn = Singleton.getInstance().entrainements.get(0);
-        Toast toast = Toast.makeText(activite.this, Singleton.getInstance().entrainements.get(Singleton.getInstance().i).name,Toast.LENGTH_SHORT);
-        toast.show();
+    }
+    /*
+    public boolean listLoadAtraining(AdapterView<?> adapterView,
+                                  View view, int i, long l){
+        Singleton.getInstance().entrainements.remove(i);
         updateListView();
+        return true;
     }
 
+     */
+    /**
+     * Method to update the list of trainings
+     */
     void updateListView() {
-
+        listEntrainement = findViewById(R.id.listeEntrainement);
         adapter = new EntrainementAdapter(activite.this, R.layout.items, Singleton.getInstance().entrainements);
         listEntrainement.setAdapter(adapter);
 
+    }
+    boolean checkValues(){
+        boolean result=true;
+        EditText editRep, editMin, editSec, editRec, editName;
+        editRep = findViewById(R.id.Rep);
+        editMin = findViewById(R.id.min);
+        editSec = findViewById(R.id.sec);
+        editRec = findViewById(R.id.Rec);
+        editName = findViewById(R.id.Name);
+        int maxvalueint = 65535;
+        if(editRep.getText().toString().isEmpty() || Integer.parseInt(editRep.getText().toString())>maxvalueint || editMin.getText().toString().equals("") || editSec.getText().toString().equals("") || editRec.getText().toString().equals("") || editRep.getText().toString().equals(("0"))) {
+            Toast toaast = Toast.makeText(activite.this, "Les valeurs saisies sont incorrectes", Toast.LENGTH_SHORT);
+            toaast.show();
+            result=false;
+        }
+        return result;
+    }
+    public void FileSaveOnEnd() {
+        Log.i("Main activity", "Tentative de sauvegarde 1");
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
+        try {
+            Log.d("MainActivity", "Creation du fichier");
+            bos = new BufferedOutputStream(new FileOutputStream(new File(getFilesDir() +"listEntrainements.txt")));
+            //byte[] buf = new byte[8];
+            int i = 0;
+            bos.write(Singleton.getInstance().entrainements.get(i).getName().getBytes());
+            Log.d("Writing Name of training in bytes", String.valueOf(Singleton.getInstance().entrainements.get(i).getName().getBytes()));
+            bos.write(Singleton.getInstance().entrainements.get(i).getRepetitions());
+            Log.d("all cost", String.valueOf(Singleton.getInstance().entrainements.get(i).getRepetitions()));
+            bos.write(Singleton.getInstance().entrainements.get(i).getMinutes());
+            Log.d("all cost", String.valueOf(Singleton.getInstance().entrainements.get(i).getMinutes()));
+            bos.write((int) Singleton.getInstance().entrainements.get(i).getSecondes());
+            Log.d("all cost", String.valueOf(Singleton.getInstance().entrainements.get(i).getSecondes()));
+            bos.write((int) Singleton.getInstance().entrainements.get(i).getRecuperation());
+            Log.d("all cost", String.valueOf(Singleton.getInstance().entrainements.get(i).getRecuperation()));
+            bos.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }/*
+
+        Files fichier = new Files();
+        fichier.writeToFile(Singleton.getInstance().entrainements.get(0).getName(), getApplicationContext());
+        fichier.writeToFile(Singleton.getInstance().entrainements.get(0).getDate(), getApplicationContext());
+        String lecture = fichier.readFromFile(getApplicationContext());
+        Log.d("Main", lecture);
+        */
+    }
+    public void FilesaveATraining(Context context) {
+        for (int i = 0; i==Singleton.getInstance().entrainements.size(); i++) {
+            try {
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("config.txt", Context.MODE_PRIVATE));
+                outputStreamWriter.write(Singleton.getInstance().entrainements.get(i).name);
+                outputStreamWriter.close();
+            } catch (IOException e) {
+                Log.e("Exception", "File write failed: " + e.toString());
+            }
+        }
     }
 }

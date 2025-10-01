@@ -56,14 +56,10 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                         if(b){
-                            //imageViewMain.setVisibility(
-                              //      View.VISIBLE);
                             switchimage.setText("GIIIIF");
 
                         imageViewMain.setImageResource(images[0]);
                         }else{
-                            // imageViewCharacter.setVisibility(
-                            //       View.INVISIBLE);
                             switchimage.setText("BLEINCOS");
                             imageViewMain.setImageResource(images[1]);
                         }

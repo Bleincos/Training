@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:onClick="buttonBackMain"
     tools:context=".activite">
 
     <EditText
@@ -42,7 +43,7 @@
             <TextView
                 android:id="@+id/textView5"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="36dp"
                 android:text="@string/Rep" />
 
             <EditText
@@ -62,7 +63,7 @@
             <TextView
                 android:id="@+id/textView6"
                 android:layout_width="100dp"
-                android:layout_height="wrap_content"
+                android:layout_height="36dp"
                 android:text="@string/Minutes" />
 
             <EditText
@@ -82,14 +83,14 @@
             <TextView
                 android:id="@+id/textView4"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="36dp"
                 android:layout_weight="0"
                 android:text="@string/Secondes" />
 
             <EditText
                 android:id="@+id/sec"
                 android:layout_width="match_parent"
-                android:layout_height="87dp"
+                android:layout_height="65dp"
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="@string/Secondes"
@@ -108,13 +109,13 @@
             <TextView
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="36dp"
                 android:text="@string/Recup" />
 
             <EditText
                 android:id="@+id/Rec"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="65dp"
                 android:ems="10"
                 android:hint="@string/Secondes"
                 android:inputType="number" />
@@ -212,7 +213,8 @@
         android:id="@+id/listeEntrainement"
         android:layout_width="357dp"
         android:layout_height="208dp"
-        android:background="#BC1919"
+        android:background="@color/material_dynamic_neutral90"
+        android:divider="@color/yellow"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
