@@ -36,11 +36,16 @@ import com.bumptech.glide.Glide;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 public class activite extends AppCompatActivity implements SensorEventListener {
@@ -59,7 +64,7 @@ public class activite extends AppCompatActivity implements SensorEventListener {
 
     /**
      * method called on creation
-     * @param savedInstanceState
+     * @param savedInstanceState x
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,10 +81,11 @@ public class activite extends AppCompatActivity implements SensorEventListener {
             checkSensor();
         }
         listEntrainement = findViewById(R.id.listeEntrainement);
-        EntrainementType entrainementParDéfaut = new EntrainementType("Entrainement par défaut",5,0,40,20);
-        Singleton.getInstance().entrainements.add(entrainementParDéfaut);
-        Toast toast = Toast.makeText(activite.this, Singleton.getInstance().entrainements.get(Singleton.getInstance().i).name,Toast.LENGTH_SHORT);
-        toast.show();
+        if(Singleton.getInstance().entrainements.isEmpty()) {
+            EntrainementType entrainementParDefaut = new EntrainementType("Entrainement par défaut", 5, 0, 40, 20);
+            Singleton.getInstance().entrainements.add(entrainementParDefaut);
+            position++;
+        }
         init = true;
         main();
     }
@@ -111,10 +117,10 @@ public class activite extends AppCompatActivity implements SensorEventListener {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView,
                                            View view, int i, long l) {
+                Toast toast = Toast.makeText(activite.this, "Entrainement :"+Singleton.getInstance().entrainements.get(i).name+" supprimé",Toast.LENGTH_SHORT);
+                toast.show();
                 Singleton.getInstance().entrainements.remove(i);
                 updateListView();
-                Toast toast = Toast.makeText(activite.this, "Ohhhh",Toast.LENGTH_SHORT);
-                toast.show();
                 return true;
             }
         });
@@ -126,16 +132,6 @@ public class activite extends AppCompatActivity implements SensorEventListener {
                 editMin.setText(""+Singleton.getInstance().entrainements.get(position).minutes);
                 editSec.setText(""+Singleton.getInstance().entrainements.get(position).secondes);
                 editRec.setText(""+Singleton.getInstance().entrainements.get(position).recuperation);
-                Toast toast = Toast.makeText(activite.this, "ehhhhh",Toast.LENGTH_SHORT);
-                toast.show();
-                /*
-                Intent intent = new Intent(activite.this, class);
-                Singleton.getInstance().state=Boolean.TRUE;
-                Singleton.getInstance().i=position;
-                startActivity(intent);
-                finish();
-
-                 */
             }
         });
         buttonLaunch.setOnClickListener(new View.OnClickListener() {
@@ -170,15 +166,20 @@ public class activite extends AppCompatActivity implements SensorEventListener {
      *
      * @param view
      */
-    public void buttonBackMain(View view) {
+    public void buttonBackMain(View view) throws FileNotFoundException {
         Log.i("Activite", "buttonBackClicked");
-        FilesaveATraining(activite.this);
+        FileSaveOnEnd();
+        FileLoadTrainings(this);
+        /*
         Intent intent = new Intent(
+
                 activite.this,
                 MainActivity.class
         );
         startActivity(intent);
         finish();
+
+         */
     }
 
     /**
@@ -247,7 +248,7 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         rep.setText("Répétitions : " + tab[0]);
         minutes.setText("Minutes restantes : " + tab[1]);
         sec.setText("Secondes restantes : " + tab[2]);
-        new CountDownTimer(tab[1] * 60 * 1000 + tab[2] * 1000, 1000) {
+        new CountDownTimer(tab[1] * 60 * 1000 + (tab[2]+1) * 1000, 1000) {
             @Override
             public void onFinish() {
                 bip.start();
@@ -272,18 +273,23 @@ public class activite extends AppCompatActivity implements SensorEventListener {
 
             @Override
             public void onTick(long l) {
-                if (l / 60000 >= 1) {
+                if (l / 61000 >= 1) {
                     sec.setText("Secondes restantes : " + (l % 60000) / 1000);
                     minutes.setText("Minutes restantes :" + l / 60000);
                 } else {
                     minutes.setText("Minutes restantes : 0");
                     sec.setText("Secondes Restantes : " + l / 1000);
                 }
-                if (l / 1000 < 3) {
+                if (l / 1000 < 4) {
                     buzz.start();
+                }
+                if (l / 1000 < 1) {
+                    onFinish();
+                    cancel();
                 }
                 if (stop) {
                     cancel();
+                    main();
                 }
             }
         }.start();
@@ -305,7 +311,7 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         MediaPlayer endbip = MediaPlayer.create(this, R.raw.endbip);
 
 
-        new CountDownTimer((long) tab[3] * 1000, 1000) {
+        new CountDownTimer((long) (tab[3]+1) * 1000, 1000) {
             @Override
             public void onFinish() {
                 Toast toaast = Toast.makeText(activite.this, "Timer Finish!!", Toast.LENGTH_SHORT);
@@ -326,12 +332,17 @@ public class activite extends AppCompatActivity implements SensorEventListener {
             }
 
             public void onTick(long l) {
-                if (l / 1000 < 3) {
+                if (l / 1000 < 4) {
                     buzz.start();
+                }
+                if (l / 1000 < 1) {
+                    onFinish();
+                    cancel();
                 }
                 tempsRest.setText("Secondes restantes : " + l / 1000);
                 if (stop) {
                     cancel();
+                    main();
                 }
             }
         }.start();
@@ -438,7 +449,6 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         buzz.stop();
         bip.stop();
         stop = true;
-        main();
         /**
         Intent intent = new Intent(this,
                 activite.class
@@ -478,20 +488,13 @@ public class activite extends AppCompatActivity implements SensorEventListener {
             Singleton.getInstance().entrainements.add(entrainementType);
             position++;
             Singleton.getInstance().i=position;
-            Toast toast = Toast.makeText(activite.this, Singleton.getInstance().entrainements.get(Singleton.getInstance().i).name,Toast.LENGTH_SHORT);
-            toast.show();
+            //Toast toast = Toast.makeText(activite.this, Singleton.getInstance().entrainements.get(Singleton.getInstance().i).name,Toast.LENGTH_SHORT);
+            //toast.show();
             updateListView();
         }
     }
-    /*
-    public boolean listLoadAtraining(AdapterView<?> adapterView,
-                                  View view, int i, long l){
-        Singleton.getInstance().entrainements.remove(i);
-        updateListView();
-        return true;
-    }
 
-     */
+
     /**
      * Method to update the list of trainings
      */
@@ -517,25 +520,37 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         }
         return result;
     }
+    /*
+    public void Files(Context context){
+        //File file = new File (context.getFilesDir(), "Entrainements");
+        String content ="Test";
+        try (FileOutputStream fos =context.openFileOutput("Entrainements",Context.MODE_PRIVATE)){
+            fos.write(content.toByteArray());
+        }
+    }
+
+     */
+
     public void FileSaveOnEnd() {
         Log.i("Main activity", "Tentative de sauvegarde 1");
-        BufferedInputStream bis = null;
         BufferedOutputStream bos = null;
         try {
             Log.d("MainActivity", "Creation du fichier");
             bos = new BufferedOutputStream(new FileOutputStream(new File(getFilesDir() +"listEntrainements.txt")));
+            Toast toast = Toast.makeText(this,"fileDir:"+getFilesDir(), Toast.LENGTH_SHORT);
+            toast.show();
             //byte[] buf = new byte[8];
             int i = 0;
             bos.write(Singleton.getInstance().entrainements.get(i).getName().getBytes());
             Log.d("Writing Name of training in bytes", String.valueOf(Singleton.getInstance().entrainements.get(i).getName().getBytes()));
             bos.write(Singleton.getInstance().entrainements.get(i).getRepetitions());
-            Log.d("all cost", String.valueOf(Singleton.getInstance().entrainements.get(i).getRepetitions()));
+            Log.d("Writing Repetitions", String.valueOf(Singleton.getInstance().entrainements.get(i).getRepetitions()));
             bos.write(Singleton.getInstance().entrainements.get(i).getMinutes());
-            Log.d("all cost", String.valueOf(Singleton.getInstance().entrainements.get(i).getMinutes()));
+            Log.d("Writing minutes", String.valueOf(Singleton.getInstance().entrainements.get(i).getMinutes()));
             bos.write((int) Singleton.getInstance().entrainements.get(i).getSecondes());
-            Log.d("all cost", String.valueOf(Singleton.getInstance().entrainements.get(i).getSecondes()));
+            Log.d("Writing Secondes", String.valueOf(Singleton.getInstance().entrainements.get(i).getSecondes()));
             bos.write((int) Singleton.getInstance().entrainements.get(i).getRecuperation());
-            Log.d("all cost", String.valueOf(Singleton.getInstance().entrainements.get(i).getRecuperation()));
+            Log.d("Writing break", String.valueOf(Singleton.getInstance().entrainements.get(i).getRecuperation()));
             bos.close();
 
         } catch (FileNotFoundException e) {
@@ -551,6 +566,32 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         Log.d("Main", lecture);
         */
     }
+
+    public void FileLoadTrainings(Context context) throws FileNotFoundException {
+        //BufferedInputStream bis = null;
+        FileInputStream fis = context.openFileInput(getFilesDir() +"listEntrainements.txt");
+        InputStreamReader inputStreamReader =
+                new InputStreamReader(fis, StandardCharsets.UTF_8);
+        StringBuilder stringBuilder = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
+            String line = reader.readLine();
+            while (line != null) {
+                stringBuilder.append(line).append('\n');
+                line = reader.readLine();
+            }
+        } catch (IOException e) {
+            // Error occurred when opening raw file for reading.
+        } finally {
+            String contents = stringBuilder.toString();
+        }
+        /*
+        try{
+         //   bis = new BufferedInputStream(new FileInputStream(new File(getFilesDir() +"listEntrainements.txt")));
+        }
+
+         */
+    }
+    /*
     public void FilesaveATraining(Context context) {
         for (int i = 0; i==Singleton.getInstance().entrainements.size(); i++) {
             try {
@@ -562,4 +603,6 @@ public class activite extends AppCompatActivity implements SensorEventListener {
             }
         }
     }
+
+     */
 }
