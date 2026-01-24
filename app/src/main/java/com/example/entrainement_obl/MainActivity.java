@@ -1,10 +1,6 @@
 package com.example.entrainement_obl;
 
 //import android.graphics.ImageDecoder;
-import android.annotation.SuppressLint;
-import android.graphics.drawable.Drawable;
-import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -15,7 +11,6 @@ import androidx.core.view.WindowInsetsCompat;
 
 import android.util.Log;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -43,29 +38,10 @@ public class MainActivity extends AppCompatActivity {
         toaast.show();
         button_dev=findViewById(R.id.button_dev);
         buttonActivity=findViewById(R.id.buttonActivity);
-        images = new int[]{R.drawable.do_it,R.drawable.bleincos_tag};
-        imageViewMain = findViewById(R.id.imageViewMain);
-        switchimage = findViewById(R.id.switchImage);
-        switchimage.setText("Bleincos");
         imageViewGif = findViewById(R.id.imageViewGif);
         Glide.with(this)
                 .load(R.drawable.do_it)
                 .into(imageViewGif);
-        switchimage.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        if(b){
-                            switchimage.setText("GIIIIF");
-
-                        imageViewMain.setImageResource(images[0]);
-                        }else{
-                            switchimage.setText("BLEINCOS");
-                            imageViewMain.setImageResource(images[1]);
-                        }
-                    }
-                }
-        );
         button_dev.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -85,7 +61,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         Intent intent = new Intent(
                                 MainActivity.this,
-                                activite.class
+                                //activite.class
+                                testCountDown.class
                         );
                         startActivity(intent);
                         finish();

@@ -53,14 +53,16 @@ public class activite extends AppCompatActivity implements SensorEventListener {
     public SensorManager mySensorManager;
     public Sensor sensorLight;
     public static int valueMaxBrg = 255;
-    public int[] tab = new int[4]; // [0] répétitions [1] minutes [2] secondes [3] temps de récup.
-    private Boolean success = false, bool, stop, boolCh, norecup,init; //success and bool are used for the screenBrighness, stop to stop the training and boolCh for the chronometers, norecup is used to determine if the user want to recup (if not a function isn't called) and init is used to know if the activity is initialized or not (to set digit in the textview).
+    public int[] tab = new int[5]; // [0] répétitions [1] minutes [2] secondes [3] temps de récup [4] copies des répétitions pour afficher au démarrage.
+    private Boolean success = false, bool, stop, vpause = false, boolCh, norecup,init; //success and bool are used for the screenBrighness, stop to stop the training, vpause to pause, and boolCh for the chronometers, norecup is used to determine if the user want to recup (if not a function isn't called) and init is used to know if the activity is initialized or not (to set digit in the textview).
     public MediaPlayer buzz, bip;
     public long chronotrainBase = 0;
     public CharSequence tempsecoule = "0.00";
     EntrainementAdapter adapter;
     ListView listEntrainement;
     public int  position=0;
+
+    public long valTimer=0;
 
     /**
      * method called on creation
@@ -108,7 +110,7 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         chronometerSet.setText(tempsecoule);
         updateListView();
         if (!init){
-            editRep.setText(""+tab[0]);
+            editRep.setText(""+tab[4]);
             editMin.setText(""+tab[1]);
             editSec.setText(""+tab[2]);
             editRec.setText(""+tab[3]);
@@ -149,12 +151,13 @@ public class activite extends AppCompatActivity implements SensorEventListener {
                     System.out.println(tab[2]);
                     tab[3] = Integer.parseInt(editRec.getText().toString()); // récupération des temps de récupération
                     Log.i("Activite_Sec", "sec_saisies");
-                    if(editRep.getText().toString().equals("0")){
+                    if(editRec.getText().toString().equals("0")){
                         norecup=true;
                     }else{
                         norecup=false;
                     }
                     init=false;
+                    tab[4]=tab[0];
                     demarrage();
                 }
             }
@@ -168,9 +171,8 @@ public class activite extends AppCompatActivity implements SensorEventListener {
      */
     public void buttonBackMain(View view) throws FileNotFoundException {
         Log.i("Activite", "buttonBackClicked");
-        FileSaveOnEnd();
-        FileLoadTrainings(this);
-        /*
+        //FileSaveOnEnd();
+        //FileLoadTrainings(this);
         Intent intent = new Intent(
 
                 activite.this,
@@ -178,8 +180,6 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         );
         startActivity(intent);
         finish();
-
-         */
     }
 
     /**
@@ -236,6 +236,7 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         TextView minutes = findViewById(R.id.textViewMin);
         TextView sec = findViewById(R.id.textViewSecondes);
         TextView rep = findViewById(R.id.textViewRep);
+        ImageView ipause= findViewById(R.id.imageButton_pause);
         buzz = MediaPlayer.create(this, R.raw.bip);
         bip = MediaPlayer.create(this, R.raw.longbip);
         MediaPlayer endbip = MediaPlayer.create(this, R.raw.endbip);
@@ -246,8 +247,8 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         chronosTraining.start();
         Log.i("Avancement", "Récup des id");
         rep.setText("Répétitions : " + tab[0]);
-        minutes.setText("Minutes restantes : " + tab[1]);
-        sec.setText("Secondes restantes : " + tab[2]);
+        minutes.setText("" + tab[1]);
+        sec.setText("" + tab[2]);
         new CountDownTimer(tab[1] * 60 * 1000 + (tab[2]+1) * 1000, 1000) {
             @Override
             public void onFinish() {
@@ -273,12 +274,20 @@ public class activite extends AppCompatActivity implements SensorEventListener {
 
             @Override
             public void onTick(long l) {
+                if(vpause){
+                valTimer = l;
+                ipause.setImageResource(R.drawable.play);
+
+                }else{
+                    ipause.setImageResource(R.drawable.pause);
+                    onResume();
+                }
                 if (l / 61000 >= 1) {
-                    sec.setText("Secondes restantes : " + (l % 60000) / 1000);
-                    minutes.setText("Minutes restantes :" + l / 60000);
+                    sec.setText("" + (l % 60000) / 1000);
+                    minutes.setText("" + l / 60000);
                 } else {
-                    minutes.setText("Minutes restantes : 0");
-                    sec.setText("Secondes Restantes : " + l / 1000);
+                    minutes.setText("0");
+                    sec.setText("" + l / 1000);
                 }
                 if (l / 1000 < 4) {
                     buzz.start();
@@ -314,17 +323,17 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         new CountDownTimer((long) (tab[3]+1) * 1000, 1000) {
             @Override
             public void onFinish() {
-                Toast toaast = Toast.makeText(activite.this, "Timer Finish!!", Toast.LENGTH_SHORT);
-                toaast.show();
-                if (tab[0] != 1) { // machine count the 0 while everybody starts from 1 so we finish the last rep at 1 (function call at the end of the set so)
+                chronotrainBase =chronoRecup.getBase();
+                if (tab[0] != 1) { // machine count the 0 while humans starts from 1 so we finish the last rep at 1 (function call at the end of the set so)
                     tab[0]--;
                     bip.start();
                     boolCh = true;
                     debut_entrainement();
                 } else {
                     endbip.start();
-                    toaast = Toast.makeText(activite.this, "TRAINING COMPLETE, WOW!", Toast.LENGTH_SHORT);
+                    Toast toaast = Toast.makeText(activite.this, "TRAINING COMPLETE, WOW!", Toast.LENGTH_SHORT);
                     toaast.show();
+                    //chronotrainBase =chronoRecup.getBase();
                     chronoRecup.stop();
                     tempsecoule = chronoRecup.getText();
                     main();
@@ -339,7 +348,7 @@ public class activite extends AppCompatActivity implements SensorEventListener {
                     onFinish();
                     cancel();
                 }
-                tempsRest.setText("Secondes restantes : " + l / 1000);
+                tempsRest.setText("" + l / 1000);
                 if (stop) {
                     cancel();
                     main();
@@ -457,6 +466,18 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         finish();
          */
     }
+    public void callPause(View View) {
+        buzz.stop();
+        bip.stop();
+        vpause = !vpause;
+        /**
+         Intent intent = new Intent(this,
+         activite.class
+         );
+         startActivity(intent);
+         finish();
+         */
+    }
 
     /**
      * method to save a training and screen it in the listView
@@ -537,7 +558,7 @@ public class activite extends AppCompatActivity implements SensorEventListener {
         try {
             Log.d("MainActivity", "Creation du fichier");
             bos = new BufferedOutputStream(new FileOutputStream(new File(getFilesDir() +"listEntrainements.txt")));
-            Toast toast = Toast.makeText(this,"fileDir:"+getFilesDir(), Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(this,"fileDir:"+getFilesDir(), Toast.LENGTH_LONG);
             toast.show();
             //byte[] buf = new byte[8];
             int i = 0;
