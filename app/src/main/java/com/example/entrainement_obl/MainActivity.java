@@ -4,10 +4,12 @@ package com.example.entrainement_obl;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.widget.Button;
@@ -17,6 +19,8 @@ import android.widget.Toast;
 import android.view.View;
 import android.content.Intent;
 import com.bumptech.glide.Glide;
+
+import org.jetbrains.annotations.Nullable;
 
 public class MainActivity extends AppCompatActivity {
     ImageView imageViewMain, imageViewGif;
@@ -61,14 +65,14 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         Intent intent = new Intent(
                                 MainActivity.this,
-                                //activite.class
-                                testCountDown.class
+                                activite.class
                         );
                         startActivity(intent);
                         finish();
                     }
                 }
         );
+
     }
     public void buttonSettings(View view){
         Log.i("Dev_Info","buttonBackClicked");
@@ -79,4 +83,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+    public void Quit(View view){
+        finish();
+    }
+
 }

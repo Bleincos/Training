@@ -114,33 +114,18 @@
         app:layout_constraintVertical_bias="0.068" />
 
     <ImageButton
-        android:id="@+id/imageButton_pause"
-        style="@android:style/Widget.Holo.Light.ImageButton"
-        android:layout_width="180dp"
-        android:layout_height="180dp"
-        android:layout_marginBottom="68dp"
-        android:background="@drawable/button_states"
-        android:onClick="callPause"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.069"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/pause" />
-
-    <ImageButton
         android:id="@+id/imageButton"
         style="@android:style/Widget.Holo.Light.ImageButton"
         android:layout_width="180dp"
         android:layout_height="180dp"
-        android:layout_marginBottom="68dp"
+        android:layout_marginBottom="76dp"
         android:background="@drawable/button_states"
         android:backgroundTint="@color/white"
         android:onClick="callStop"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/stop" />
 
